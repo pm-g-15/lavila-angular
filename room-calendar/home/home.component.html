@@ -1,0 +1,201 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-7">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row text-center">
+        <div class="form-group ml-3">
+          <select name="location" id="location" [(ngModel)]="selectedHotel"
+            class="form-control form-control-alternative">
+            <option *ngFor="let branch of branches " value="{{branch.id}}">{{branch.name}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group ml-3">
+          <input class="form-control datepicker form-control-alternative" name="startDate" ngbDatepicker
+            #startd="ngbDatepicker" autocomplete="off" [(ngModel)]="startDate" (click)="startd.toggle()" placeholder="Start Date" type="text">
+        </div>
+        <div class="form-group ml-3">
+          <input class="form-control datepicker form-control-alternative" name="endDate" ngbDatepicker
+            #endd="ngbDatepicker" autocomplete="off" [(ngModel)]="endDate" [minDate]="startDate" (click)="endd.toggle()" placeholder="End Date" type="text">
+        </div>
+        <div class="form-group ml-3">
+          <a  href="javascript:;" (click)="search(selectedHotel,startDate,endDate)" class="btn btn-neutral btn-icon mr-4">
+            <span class="btn-inner--icon">
+              <i class="fa fa-search"></i>
+            </span>
+            <span class="btn-inner--text">Search</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7" >
+  <div class="card shadow">
+    <div class="card-body ">
+      <div *ngIf="rooms.length == 0">
+        <h3>Please search for getting the schedules</h3>
+      </div>
+      <fieldset class="brdr p-2" *ngFor="let room of rooms;let i = index">
+        <legend class="w-auto text-maroon">{{room.roomCategory.name}}</legend>
+
+        <div class="row ">
+          <div class="col-12">
+            <div class="float-right">
+              <a href="javascript:;" class="btn btn-sm btn-primary" *ngIf="!edit[i]" ngbTooltip="Edit"
+                (click)="edit[i] = true"><i class="fa fa-pencil-alt"></i></a>
+              <a href="javascript:;" class="btn btn-sm btn-primary" *ngIf="!edit[i]" (click)="openModal(bulkEditModal,i)"
+                ngbTooltip="Bulk Edit"><i class="fa fa-edit"></i></a>
+              <a href="javascript:;" *ngIf="edit[i]" class="btn btn-sm btn-primary" ngbTooltip="Update"
+                (click)="updatePrice(i)"><i class="fa fa-save"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-2 p-0">
+            <table class="table align-items-center table-flush">
+              <tr style="height: 40px;"></tr>
+              <tr style="height: 59px;"> </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">Room Status</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">Room to sell</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">Net Booked</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">BBAOne</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">BBATwo</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">ROAOne</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">ROATwo</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-10 p-0">
+            <div class="scroll-h" #container style="overflow-x: scroll; margin-right: 2em;margin-left: 2em;">
+              <table class="table table-flush calendar-table" style="border-left:solid 1px #e9ecef;">
+                <tr>
+                  <th *ngFor="let cols of getColSpan()" [attr.colspan]="cols.colspan"   class="border-right">{{cols.name}}</th> 
+                </tr>
+                <tr>
+                  <td *ngFor="let d of dates" class="border-right">{{moment(d).format('ddd')}} <br>{{moment(d).format('DD')}}</td>
+                </tr>
+                <tr>
+                  <td class=" border-right" 
+                  [class.text-red]="(room.count  ==  room.roomDate[getRoomDate(d,room)]?.bookedCount)" 
+                  [class.text-green]="(room.count  >  room.roomDate[getRoomDate(d,room)]?.bookedCount)" 
+                  *ngFor="let d of dates" >
+                    {{((room.count  ==  room.roomDate[getRoomDate(d,room)]?.bookedCount)?'C':'B')}}
+                  </td> 
+                </tr>
+                <tr>
+                  <td class="border-right" *ngFor="let d of dates">{{room.count - room.roomDate[getRoomDate(d,room)]?.bookedCount}}</td>
+                </tr>
+                <tr>
+                  <td class="border-right" *ngFor="let d of dates">{{room.roomDate[getRoomDate(d,room)]?.bookedCount}}</td>
+                </tr>
+                <tr>
+                  <td class="border-right" *ngFor="let d of dates">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(d,room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number" [(ngModel)]="room.roomDate[getRoomDate(d,room)].BBAOne">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border-right" *ngFor="let d of dates">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(d,room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number" [(ngModel)]="room.roomDate[getRoomDate(d,room)].BBATwo">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border-right" *ngFor="let d of dates">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(d,room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number" [(ngModel)]="room.roomDate[getRoomDate(d,room)].ROAOne">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="border-right" *ngFor="let d of dates">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(d,room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number" [(ngModel)]="room.roomDate[getRoomDate(d,room)].ROATwo">
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="paddles">
+              <button class="left-paddle paddle hidden" (click)="buttonLeftClick(container)">
+                <i class="fa fa-angle-left fa-2x"></i>
+              </button>
+              <button class="right-paddle paddle"  (click)="buttonRightClick(container)">
+                <i class="fa fa-angle-right fa-2x"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </fieldset>
+
+      <ng-template #loading>
+        <div class="text-center">
+          <i class="fa fa-spin fa-spinner fa-5x"></i> <br />
+          Loading events...
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+<ng-template #bulkEditModal let-modal>
+  <div class="modal-header">
+    <a href="javascript:;" class="btn btn-sm btn-primary mr-2" (click)="pricingBulkUpdate(opendRoomIndex)"><i
+      class="fa fa-save"></i></a>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-times-circle"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="card shadow">
+      <div class="container">
+        <fieldset class="brdr p-2">
+          <legend class="w-auto text-maroon">Pricing</legend>
+
+          <div class="row ">
+            <div class="col-12">
+              <div class="float-right">
+                
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6"> 
+              <div class="form-group ">
+                <input class="form-control form-control-alternative" ngbTooltip="BBAOne" [(ngModel)]="BBAOne"
+                  name="BBAOne" placeholder="BBAOne" type="number">
+              </div>
+              <div class="form-group ">
+                <input class="form-control form-control-alternative" ngbTooltip="BBATwo" [(ngModel)]="BBATwo"
+                  name="BBATwo" placeholder="BBATwo" type="number">
+              </div>
+            </div>
+            <div class="col-lg-6"> 
+              <div class="form-group ">
+                <input class="form-control form-control-alternative" ngbTooltip="ROAOne" [(ngModel)]="ROAOne"
+                  name="ROAOne" placeholder="ROAOne" type="number">
+              </div>
+              <div class="form-group ">
+                <input class="form-control form-control-alternative" ngbTooltip="ROATwo" [(ngModel)]="ROATwo"
+                  name="ROATwo" placeholder="ROATwo" type="number">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+    </div>
+  </div>
+</ng-template>

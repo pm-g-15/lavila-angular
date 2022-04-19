@@ -1,0 +1,15 @@
+<!-- Sidenav -->
+<components-sidebar></components-sidebar>
+<div class="main-content">
+  <!-- Top navbar -->
+  <components-navbar></components-navbar>
+  <!-- Pages -->
+  <!-- <div [@routeAnimations]="o && o.activatedRouteData 
+      && o.activatedRouteData['animation']"> -->
+  <!-- <router-outlet #o="outlet" (activate)="onActivate($event)"></router-outlet> -->
+  <router-outlet  (activate)="onActivate($event)"></router-outlet>
+  <!-- </div> -->
+  <div class="container-fluid">
+    <components-footer></components-footer>
+  </div>
+</div>

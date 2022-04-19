@@ -1,0 +1,110 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div>
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">Loyalty List</h3>
+                            </div>
+                            <div class="col-2 text-right">
+                                <a routerLink="/loyalty" class="btn btn-sm btn-maroon" ngbTooltip="Back"><span class="fa fa-arrow-left" ></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <!-- Projects table -->
+                            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                                style="width: 100%;" class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col" style="width: 10%;">Action</th>
+                                        <th scope="col" style="width: 18%;">Min Total Booking Amount to
+                                            Pass Loyalty</th>
+                                        <th scope="col" style="width: 18%;">One QAR Equal Point</th>
+                                        <th scope="col" style="width: 18%;">Min Total Booking Amount For
+                                            Using</th>
+                                        <th scope="col" style="width: 18%;">Min Total Booking Amount To
+                                            Get Loyalty</th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngIf="loyalties.length != 0">
+                                    <tr *ngFor="let loyaltyItem of loyalties;let i = index">
+                                        <td style="width: 10%;">
+                                            <a href="javascript:;" (click)="openModal(contentModal,i)" class="btn btn-sm btn-icon">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
+                                        <th scope="row" style="width:18%;">
+                                            {{ loyaltyItem.minTotalBookingAmountPassLoyalty }}
+                                        </th>
+                                        <th scope="row" style="width:18%;">
+                                            {{ loyaltyItem.oneQAREqualPoint }}
+                                        </th>
+                                        <th scope="row" style="width:18%;">
+                                            {{ loyaltyItem.minTotalBookingAmountForUsing }}
+                                        </th>
+                                        <th scope="row" style="width:18%;">
+                                            {{ loyaltyItem.minTotalBookingAmountToGetLoyalty }}
+                                        </th>
+                                    </tr>
+                                </tbody> 
+                                <tbody *ngIf="loyalties.length == 0">
+                                    <tr>
+                                        <td colspan="3" class="no-data-available">No data!</td>
+                                    </tr>
+                                <tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #contentModal let-modal>
+    <div class="modal-header">
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <i class="fa fa-times-circle"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="card shadow">
+        <div class="container">
+          <fieldset class="brdr p-2">
+            <legend class="w-auto text-maroon">Loyalty Detail</legend>
+  
+            <div class="pl-lg-4">
+                <div class="form-group d-flex">
+                    <label class="mt-2">1) Minimum total booking amount to pass loyalty
+                        program =  {{loyalties[selectedIndex].minTotalBookingAmountPassLoyalty}} QAR </label>
+                </div>
+                <div class="form-group d-flex">
+                    <label class="mt-2">2) 1 QAR = {{loyalties[selectedIndex].oneQAREqualPoint}} loyalty point </label>
+                </div>
+                <div class="form-group d-flex">
+                    <label class="mt-2">3) Minimum booking amount for using loyalty point = {{loyalties[selectedIndex].minTotalBookingAmountForUsing}} QAR </label>
+                </div>
+                <div class="form-group d-flex">
+                    <label class="mt-2">4) Minimum booking amount to get loyalty point for
+                        single booking = {{loyalties[selectedIndex].minTotalBookingAmountToGetLoyalty}} QAR </label>
+                </div>
+            </div>
+          </fieldset>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>

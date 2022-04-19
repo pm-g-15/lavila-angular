@@ -1,0 +1,77 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div>
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">Update Related Rooms</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                                <a class="btn btn-sm btn-maroon" href="javascript:;" (click)="updateRelatedRoom()">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="isLoading"></span>
+                                    <span *ngIf="!isLoading">Update</span>
+                                </a>
+                                <a class="btn btn-sm btn-maroon" [routerLink]="['/rooms']" > 
+                                    <span >Complete</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <fieldset class="brdr p-2">
+                                            <legend class="w-auto text-maroon">Select Related Rooms</legend> 
+                                            <div class="row">
+                                                <div class="col-lg-4 mb-2" *ngFor="let otherRoom of otherRooms">
+                                                    <div class="brdr ">
+                                                        <div
+                                                        class="custom-control custom-control-alternative custom-checkbox mb-3">
+                                                        <input class="custom-control-input"
+                                                            id="customCheck{{otherRoom.id}}"  [checked]="selectedOtherRooms.indexOf(otherRoom.id) != -1" (change)="changeOtherRooms($event,otherRoom.id)" name="otherRoom{{otherRoom.id}}" type="checkbox">
+                                                        <label class="custom-control-label"
+                                                            for="customCheck{{otherRoom.id}}">Select</label>
+                                                    </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <div class="form-group">
+                                                                    <label>{{otherRoom.branch.name+" "+otherRoom.roomCategory.name}}</label>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <p>{{otherRoom.description}}</p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Adult Price:{{otherRoom.adultPrice}}</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6 ">
+                                                                <img src="{{ otherRoom.roomImages[0].path}}" class="addon-image"
+                                                                    alt="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

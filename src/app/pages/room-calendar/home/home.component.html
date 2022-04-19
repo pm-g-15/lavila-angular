@@ -1,0 +1,878 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-7">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row text-center">
+        <div class="form-group ml-3">
+          <select name="location" id="location" [(ngModel)]="selectedHotel"
+            class="form-control form-control-alternative">
+            <option value="null" disabled>Select Branch</option>
+            <option *ngFor="let branch of branches " value="{{branch.id}}">{{branch.name}} </option>
+          </select>
+        </div>
+        <div class="form-group ml-3">
+          <input class="form-control datepicker form-control-alternative" name="startDate" ngbDatepicker
+            #startd="ngbDatepicker" autocomplete="off" [(ngModel)]="startDate" [minDate]="minDate"
+            (click)="startd.toggle()" placeholder="Start Date" type="text">
+        </div>
+        <div class="form-group ml-3">
+          <!-- <input class="form-control datepicker form-control-alternative" name="endDate" ngbDatepicker
+            #endd="ngbDatepicker" autocomplete="off" [(ngModel)]="endDate" [minDate]="startDate"
+            [maxDate]="getMaxDate()"
+             (click)="endd.toggle()" placeholder="End Date" type="text"> -->
+          <input class="form-control datepicker form-control-alternative" name="endDate" ngbDatepicker
+            #endd="ngbDatepicker" autocomplete="off" [(ngModel)]="endDate" [minDate]="startDate" (click)="endd.toggle()"
+            placeholder="End Date" type="text">
+        </div>
+        <div class="form-group ml-3">
+          <a href="javascript:;" (click)="search(selectedHotel,startDate,endDate)"
+            class="btn btn-neutral btn-icon mr-4">
+            <span class="btn-inner--icon">
+              <i class="fa fa-search"></i>
+            </span>
+            <span class="btn-inner--text">Search</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="card shadow">
+    <div class="card-body ">
+      <div *ngIf="rooms.length == 0">
+        <h3>Please search for getting the schedules</h3>
+      </div>
+      <fieldset class="brdr p-2" *ngFor="let room of rooms;let i = index">
+        <legend class="w-auto text-maroon">{{room.roomCategory.name}}</legend>
+
+        <!-- <fieldset class="brdr p-2 mb-2">
+          <legend class="w-auto text-maroon">Update Room Count</legend>
+          <div class="row">
+            <div class="col-lg-10">
+              <input class="form-control form-control-alternative mb-2" placeholder="Room Count" type="number"
+                [(ngModel)]="room.count" ngbTooltip="Room Count">
+            </div>
+            <div class="col-lg-2">
+              <button [disabled]="saveRoomCountLoadingIndex == i" class="btn btn-sm btn-primary float-right"
+                (click)="updateRoomCount(i)">
+                <span class="fa fa-circle-notch fa-spin" *ngIf="saveRoomCountLoadingIndex == i"></span>
+                <span *ngIf="saveRoomCountLoadingIndex != i">Update</span>
+              </button>
+            </div>
+          </div>
+
+
+        </fieldset> -->
+        <fieldset class="brdr p-2">
+          <legend class="w-auto text-maroon">Update Room Count with date</legend>
+          <div class="row">
+            <div class="col-lg-4">
+              <input class="form-control form-control-alternative mb-2" placeholder="Room Count" type="number" min="0" (keypress)="validateExpiry($event)"
+                [(ngModel)]="room.count" ngbTooltip="Room Count">
+            </div>
+            <div class="col-lg-3">
+              <input class="form-control datepicker form-control-alternative" name="roomCountStartDate" ngbDatepicker
+                #roomCountStartd="ngbDatepicker" autocomplete="off" [(ngModel)]="room.roomCountStartDate"
+                [minDate]="startDate" [maxDate]="endDate" (click)="roomCountStartd.toggle()" placeholder="Start Date"
+                type="text">
+            </div>
+            <div class="col lg-3">
+              <input class="form-control datepicker form-control-alternative" name="roomCountEndDate" ngbDatepicker
+                #roomCountEndd="ngbDatepicker" autocomplete="off" [(ngModel)]="room.roomCountEndDate"
+                [minDate]="room.roomCountStartDate || startDate" [maxDate]="endDate" (click)="roomCountEndd.toggle()"
+                placeholder="End Date" type="text">
+            </div>
+            <div class="col-lg-2">
+              <button [disabled]="saveRoomCountLoadingIndex == i" class="btn btn-sm btn-primary float-right"
+                (click)="updateRoomCountWithDate(i)">
+                <span class="fa fa-circle-notch fa-spin" *ngIf="saveRoomCountLoadingIndex == i"></span>
+                <span *ngIf="saveRoomCountLoadingIndex != i">Update</span>
+              </button>
+            </div>
+          </div>
+        </fieldset>
+        <br />
+
+        <div class="row ">
+          <div class="col-12">
+            <div class="float-right">
+              <a href="javascript:;" class="btn btn-sm btn-primary" *ngIf="!edit[i]" (click)="edit[i] = true">Edit</a>
+              <a href="javascript:;" class="btn btn-sm btn-primary" *ngIf="!edit[i]"
+                (click)="openModal(bulkEditModal,i)">Bulk Edit</a>
+              <button [disabled]="saveLoading" *ngIf="edit[i]" class="btn btn-sm btn-primary" (click)="updatePrice(i)">
+                <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                <span *ngIf="!saveLoading">Update</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-2 p-0">
+            <table class="table align-items-center table-flush">
+              <tr style="height: 61px;"> </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">Room Status</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">Room to sell</td>
+              </tr>
+              <tr>
+                <td style=" border:solid 1px #e9ecef;">Net Booked</td>
+              </tr>
+              <tr style="height: 44px;">
+                <td style=" border:solid 1px #e9ecef;">RO-SGL</td>
+              </tr>
+              <tr style="height: 44px;">
+                <td style=" border:solid 1px #e9ecef;">RO-DBL</td>
+              </tr>
+              <tr style="height: 44px;">
+                <td style=" border:solid 1px #e9ecef;">BB-SGL</td>
+              </tr>
+              <tr style="height: 44px;">
+                <td style=" border:solid 1px #e9ecef;">BB-DBL</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-10 p-0">
+            <div class="scroll-h" #container style="  margin-right: 2em;margin-left: 2em;">
+              <table class="table table-flush calendar-table" style="border-left:solid 1px #e9ecef;">
+
+
+
+
+
+
+
+                <!-- Dates -->
+                <tr>
+                  <td class="border-right" style="width: 78px;">
+                    <span class="badge badge-primary">{{moment(room.startDate).format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).format('ddd')}}
+                    {{moment(room.startDate).format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(1,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(1,'days').format('ddd')}}
+                    {{moment(room.startDate).add(1,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(2,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(2,'days').format('ddd')}}
+                    {{moment(room.startDate).add(2,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(3,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(3,'days').format('ddd')}}
+                    {{moment(room.startDate).add(3,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(4,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(4,'days').format('ddd')}}
+                    {{moment(room.startDate).add(4,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(5,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(5,'days').format('ddd')}}
+                    {{moment(room.startDate).add(5,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(6,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(6,'days').format('ddd')}}
+                    {{moment(room.startDate).add(6,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(7,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(7,'days').format('ddd')}}
+                    {{moment(room.startDate).add(7,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(8,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(8,'days').format('ddd')}}
+                    {{moment(room.startDate).add(8,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(9,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(9,'days').format('ddd')}}
+                    {{moment(room.startDate).add(9,'days').format('DD')}}
+                  </td>
+                  <td class="border-right" style="width: 78px;"
+                    *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)">
+                    <span class="badge badge-primary">{{moment(room.startDate).add(10,'days').format('MMM')}}
+                      {{moment(room.startDate).format('YYYY')}} </span><br />
+                    {{moment(room.startDate).add(10,'days').format('ddd')}}
+                    {{moment(room.startDate).add(10,'days').format('DD')}}
+                  </td>
+                </tr>
+                <!-- Dates end -->
+
+
+
+
+
+                <!-- getRoomToSell(0, room.id, room.count, room) -->
+
+                <!-- Room Status -->
+                <tr>
+                  <td class=" border-right"
+                    [class.text-red]="(getRoomToSell(0, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(0, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate),room)]?.bookedCount)">
+                    {{((getRoomToSell(0, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(1, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(1, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(1, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(2, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(2, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(2, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(3, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(3, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(3, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(4, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(4, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(4, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(5, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(5, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(5, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(6, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(6, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(6, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(7, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(7, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(1, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(8, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(8, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(8, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(9, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(9, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(9, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                  <td class=" border-right" *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)"
+                    [class.text-red]="(getRoomToSell(10, room.id, room.count, room)   ==  room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.bookedCount)"
+                    [class.text-green]="(getRoomToSell(10, room.id, room.count, room)  >  room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.bookedCount)">
+                    {{((getRoomToSell(10, room.id, room.count, room)  ==  room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.bookedCount)?'C':'B')}}
+                  </td>
+                </tr>
+                <!-- Room Status end -->
+
+
+
+
+
+
+
+
+
+
+
+
+                <!-- Room to sell -->
+                <tr>
+                  <td class="border-right">
+
+                    <!-- {{room.count - room.roomDate[getRoomDate(moment(room.startDate),room)]?.bookedCount}} -->
+                    {{getRoomToSell(0, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(1, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(2, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(3, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(4, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(5, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(6, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(7, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(8, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(9, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.bookedCount}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)">
+                    {{getRoomToSell(10, room.id, room.count, room) - room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.bookedCount}}
+                  </td>
+                </tr>
+                <!-- Room to sell end -->
+
+
+
+
+
+
+
+
+
+
+
+                <!-- Net booked -->
+                <tr>
+                  <td class="border-right">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.bookedCount):0}}
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)">
+                    {{(room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.bookedCount)?(room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.bookedCount):0}}
+                  </td>
+                </tr>
+                <!-- Net booked end -->
+
+
+
+
+
+
+
+
+
+                <!-- ROAOne -->
+                <tr style="height: 44px;">
+                  <td class="border-right">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate),room)].ROAOne" (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.ROAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROAOne"
+                      (change)="
+                      room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].BBAOne = room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROAOne*room.BBAOnePercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].BBATwo = room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROAOne*room.BBATwoPercent)/100);
+                      room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROATwo = room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROAOne+((room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROAOne*room.ROATwoPercent)/100);
+                    ">
+                  </td>
+                </tr>
+                <!-- ROAOne end -->
+
+
+
+
+
+
+
+
+                <!-- ROATwo -->
+                <tr style="height: 44px;">
+                  <td class="border-right">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.ROATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].ROATwo"
+                      [disabled]="(room.ROATwoPercent!= null)?true:false">
+                  </td>
+                </tr>
+                <!-- ROATwo end -->
+
+
+
+
+
+
+
+
+
+                <!-- BBAOne -->
+                <tr style="height: 44px;">
+                  <td class="border-right">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                  <td class="border-right" *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.BBAOne}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].BBAOne"
+                      [disabled]="(room.BBAOnePercent!= null)?true:false">
+                  </td>
+                </tr>
+                <!-- BBAOne end -->
+
+
+
+
+
+
+
+
+
+                <!-- BBATwo -->
+                <tr style="height: 44px;">
+                  <td class="border-right" style=" border:solid 1px #e9ecef;">
+                    <label *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(1,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(1,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(2,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(2,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(3,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(3,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(4,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(4,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(5,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(5,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(6,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(6,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(7,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(7,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(8,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(8,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(9,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(9,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                  <td class="border-right" style=" border:solid 1px #e9ecef;"
+                    *ngIf="moment(room.startDate).add(10,'days') <= moment(room.endDate)">
+                    <label
+                      *ngIf="!edit[i]">{{room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)]?.BBATwo}}</label>
+                    <input *ngIf="edit[i]" class="form-control form-control-alternative" type="number"
+                      [(ngModel)]="room.roomDate[getRoomDate(moment(room.startDate).add(10,'days'),room)].BBATwo"
+                      [disabled]="(room.BBATwoPercent != null)?true:false">
+                  </td>
+                </tr>
+                <!-- BBATwo End -->
+              </table>
+            </div>
+            <div class="paddles">
+              <button *ngIf="moment(room.startDate).format('YYYY-MM-DD') > searchStartDate.format('YYYY-MM-DD')"
+                class="left-paddle paddle hidden" (click)="buttonLeftClick(room)">
+                <i class="fa fa-angle-left fa-2x"></i>
+              </button>
+              <button *ngIf="moment(room.endDate).format('YYYY-MM-DD') < searchEndDate.format('YYYY-MM-DD')"
+                class="right-paddle paddle" (click)="buttonRightClick(room)">
+                <i class="fa fa-angle-right fa-2x"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <ng-template #loading>
+        <div class="text-center">
+          <i class="fa fa-spin fa-spinner fa-5x"></i> <br />
+          Loading events...
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+<ng-template #bulkEditModal let-modal>
+  <div class="modal-header">
+    <a href="javascript:;" class="close mr-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-times-circle"></i></a>
+    <button type="button" class="btn btn-sm btn-primary" [disabled]="saveLoading"
+      (click)="pricingBulkUpdate(opendRoomIndex)">
+      <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+      <span *ngIf="!saveLoading"><i class="fa fa-save"></i></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="card shadow">
+      <div class="container">
+        <fieldset class="brdr p-2">
+          <legend class="w-auto text-maroon">Pricing</legend>
+
+          <div class="row ">
+            <div class="col-12">
+              <div class="float-right">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group ">
+                <input class="form-control form-control-alternative" ngbTooltip="ROAOne" [(ngModel)]="ROAOne" (change)="
+                BBATwo = ROAOne+(ROAOne*rooms[opendRoomIndex].BBATwoPercent/100);
+                BBAOne = ROAOne+(ROAOne*rooms[opendRoomIndex].BBAOnePercent/100);
+                ROATwo = ROAOne+(ROAOne*rooms[opendRoomIndex].ROATwoPercent/100);
+                " name="ROAOne" placeholder="ROAOne" type="number">
+              </div>
+              <div class="form-group ">
+                <input [disabled]="rooms[opendRoomIndex].ROATwoPercent" class="form-control form-control-alternative"
+                  ngbTooltip="ROATwo" [(ngModel)]="ROATwo" name="ROATwo" placeholder="ROATwo" type="number">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group ">
+                <input [disabled]="rooms[opendRoomIndex].BBAOnePercent" class="form-control form-control-alternative"
+                  ngbTooltip="BBAOne" [(ngModel)]="BBAOne" name="BBAOne" placeholder="BBAOne" type="number">
+              </div>
+              <div class="form-group ">
+                <input [disabled]="rooms[opendRoomIndex].BBATwoPercent" class="form-control form-control-alternative"
+                  ngbTooltip="BBATwo" [(ngModel)]="BBATwo" name="BBATwo" placeholder="BBATwo" type="number">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+    </div>
+  </div>
+</ng-template>

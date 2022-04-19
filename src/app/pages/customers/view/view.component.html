@@ -1,0 +1,83 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div>
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">View Customer</h3>
+                            </div>
+                            <div class="col-2 text-right"> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <fieldset class="border p-2">
+                                        <legend class="w-auto text-maroon ">General Info</legend>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <img src="{{user.image}}" alt="">
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">First name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p>{{user.fName}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Last Name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p>{{user.lName}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Email</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p>{{user.email}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Phone</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p>{{user.phone}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </fieldset>
+                                </div>
+                            </div> 
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="container text-center p-8" *ngIf="!user">
+                    <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

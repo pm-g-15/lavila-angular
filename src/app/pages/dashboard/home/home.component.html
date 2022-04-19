@@ -1,0 +1,174 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+  <div class="container-fluid" *ngIf="dashboardData">
+    <div class="header-body">
+      <!-- Card stats -->
+      <div class="row">
+        <div class="col-xl-3 col-lg-6">
+          <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Sales</h5>
+                  <span class="h2 font-weight-bold mb-0">{{dashboardData.dashboardCount.sales}}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-yellow text-white rounded-circle shadow">
+                    <i class="fas fa-cart"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+          <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Today Booking</h5>
+                  <span class="h2 font-weight-bold mb-0">{{dashboardData.dashboardCount.todayBooking}}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                    <i class="fas fa-chart-bar"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+          <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Booking</h5>
+                  <span class="h2 font-weight-bold mb-0">{{dashboardData.dashboardCount.totalBooking}}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                    <i class="fas fa-chart-pie"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+          <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Customer</h5>
+                  <span class="h2 font-weight-bold mb-0">{{dashboardData.dashboardCount.totalCustomer}}</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-info text-white rounded-circle shadow">
+                    <i class="fas fa-users"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid mt--7" *ngIf="dashboardData">
+  <div class="row mt-5">
+    <div class="col-xl-8 mb-5 mb-xl-0">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Booking</h3>
+            </div>
+            <div class="col text-right">
+              <a routerLink="/booking" class="btn btn-sm btn-primary">See all</a>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Hotel</th>
+                <th scope="col">Check In</th>
+                <th scope="col">Check Out</th>
+                <th scope="col">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let booking of dashboardData.booking">
+                <th scope="row">
+                  {{booking.branch.name}}
+                </th>
+                <td>
+                  {{booking.checkIn}}
+                </td>
+                <td>
+                  {{booking.checkOut}}
+                </td>
+                <td>
+                  {{booking.finalPrice}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Feedbacks</h3>
+            </div>
+            <div class="col text-right">
+              <a routerLink="/branches" class="btn btn-sm btn-primary">See all</a>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Rating</th>
+                <th scope="col">Message</th>
+                <th scope="col">User</th>
+                <th scope="col">Hotel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let feedback of dashboardData.feedbacks">
+                <th scope="row">
+                  <ngb-rating [(rate)]="feedback.rating" [readonly]="true" [max]="5">
+                    <ng-template let-fill="fill" let-index="index">
+                    <span class="star" [class.filled]="fill === 100" [class.bad]="index < 3">&#9733;</span>
+                    </ng-template>
+                </ngb-rating>
+                </th>
+                <td>
+                  {{feedback.message}}
+                </td>
+                <td>
+                  {{feedback.user.fName+" "+feedback.user.lName}}
+                </td>
+                <td>
+                  {{feedback.branch.name}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container text-center p-8" *ngIf="!dashboardData">
+    <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+</div>

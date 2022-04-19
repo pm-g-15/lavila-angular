@@ -1,0 +1,14 @@
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { InstructionsComponent } from './instructions.component';
+
+
+const routes: Routes = [
+  {path:"",component:InstructionsComponent,pathMatch:"full"}
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class InstructionsRoutingModule { }

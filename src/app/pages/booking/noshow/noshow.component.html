@@ -1,0 +1,113 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid mt--7">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card shadow">
+          <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <select name="hotel" id="hotel" class="form-control form-control-alternative" [(ngModel)]="noShowBookingSearch.branch">
+                      <option selected disabled value="">Select Branch</option>
+                      <option [value]="branch.id" *ngFor="let branch of branches">{{branch.name}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input class="form-control datepicker form-control-alternative" name="checkIn" ngbDatepicker
+                    #startd3="ngbDatepicker" autocomplete="off" [(ngModel)]="noShowBookingSearch.checkIn" (click)="startd3.toggle()" placeholder="Check In" type="text">
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input class="form-control datepicker form-control-alternative" name="checkOut" ngbDatepicker
+                    #endd3="ngbDatepicker" autocomplete="off" [(ngModel)]="noShowBookingSearch.checkOut" (click)="endd3.toggle()" placeholder="Check Out" type="text">
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input type="text" class="form-control form-control-alternative" [(ngModel)]="noShowBookingSearch.fName" placeholder="Guest name">
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input type="number" class="form-control form-control-alternative" [(ngModel)]="noShowBookingSearch.booking" placeholder="Booking ID">
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <button (click)="search()" class="btn btn-maroon">Search</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table datatable [dtTrigger]="noShowBDtTrigger" [dtOptions]="noShowBDtOptions" style="width: 100%;"
+                  class="table align-items-center table-flush">
+                  <thead class="thead-light">
+                    <tr>
+                      <th scope="col" style="width: 10%;">Booking Id</th>
+                      <th scope="col" style="width: 10%;">Check In</th>
+                      <th scope="col" style="width: 10%;">Check Out</th>
+                      <th scope="col" style="width: 10%;">Guest Name</th>
+                      <th scope="col" style="width: 10%;">Booked On</th>
+                      <th scope="col" style="width: 10%;">Price</th>
+                      <th scope="col" style="width: 10%;">Status</th>
+                      <th scope="col" style="width: 20%;">Room Categories</th>
+                      <th scope="col" style="width: 10%;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody  *ngIf="noShowBooking.length != 0">
+                    <tr *ngFor="let noShowb of noShowBooking">
+                      <th scope="row" style="width: 10%;">
+                        {{noShowb.bookingId}}
+                      </th>
+                      <td style="width: 10%;">
+                        {{noShowb.checkIn}}
+                      </td>
+                      <td style="width: 10%;">
+                        {{noShowb.checkOut}}
+                      </td>
+                      <td style="width: 10%;">
+                        {{noShowb.fName}}
+                      </td>
+                      <td style="width: 10%;">
+                        {{noShowb.createdAt}}
+                      </td>
+                      <td style="width: 10%;">
+                        {{noShowb.finalPrice}}
+                      </td>
+                      <td style="width: 10%;">
+                        {{noShowb.status}}
+                      </td>
+                      <td style="width: 20%;">
+                        {{noShowb.roomCategories}}
+                      </td>
+                      <td style="width: 10%;">
+
+                        <a [routerLink]="['/booking/view',noShowb.id]" class="btn btn-neutral btn-icon">
+                          <i class="fa fa-eye"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                  
+                  <tbody *ngIf="noShowBooking.length == 0">
+                    <tr>
+                      <td colspan="3" class="no-data-available">No data!</td>
+                    </tr>
+                  <tbody>
+                </table>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

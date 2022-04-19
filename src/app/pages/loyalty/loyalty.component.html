@@ -1,0 +1,75 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form method="post" *ngIf="loyaltyForm" [formGroup]="loyaltyForm">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">Update Loyalty</h3>
+                                
+                            </div>
+                            <div class="col-2 text-right">
+                                
+                                <a class="btn btn-sm btn-maroon" ngbTooltip="History" routerLink="history"><span class="fa fa-history" ></span></a> 
+                                <button class="btn btn-sm btn-maroon"
+                                    [disabled]="saveLoading || !loyaltyForm.valid"
+                                    (click)="submitForm(loyaltyForm.value)" type="button">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Update</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="form-group d-flex">
+                                <label class="mt-2">1) Minimum total booking amount to pass loyalty
+                                    program = </label> <input type="number"
+                                    id="minTotalBookingAmountPassLoyalty"
+                                    name="minTotalBookingAmountPassLoyalty"
+                                    formControlName="minTotalBookingAmountPassLoyalty"
+                                    class="form-control form-control-alternative w-25 ml-2 mr-2" />
+                                <label class="mt-2"> QAR </label>
+                            </div>
+                            <div class="form-group d-flex">
+                                <label class="mt-2">2) 1 QAR = </label> <input type="number"
+                                    id="oneQAREqualPoint" name="oneQAREqualPoint"
+                                    formControlName="oneQAREqualPoint"
+                                    class="form-control form-control-alternative w-25 ml-2 mr-2" />
+                                <label class="mt-2"> loyalty point </label>
+                            </div>
+                            <div class="form-group d-flex">
+                                <label class="mt-2">3) Minimum booking amount for using loyalty point =
+                                </label> <input type="number" id="minTotalBookingAmountForUsing"
+                                    name="minTotalBookingAmountForUsing"
+                                    formControlName="minTotalBookingAmountForUsing"
+                                    class="form-control form-control-alternative w-25 ml-2 mr-2" />
+                                <label class="mt-2"> QAR </label>
+                            </div>
+                            <div class="form-group d-flex">
+                                <label class="mt-2">4) Minimum booking amount to get loyalty point for
+                                    single booking = </label> <input type="number"
+                                    id="minTotalBookingAmountToGetLoyalty"
+                                    name="minTotalBookingAmountToGetLoyalty"
+                                    formControlName="minTotalBookingAmountToGetLoyalty"
+                                    class="form-control form-control-alternative w-25 ml-2 mr-2" />
+                                <label class="mt-2"> QAR </label>
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
+</div>

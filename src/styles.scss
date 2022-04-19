@@ -1,0 +1,174 @@
+// CSS Reset, comment out if not required or using a different module 
+/* You can add global styles to this file, and also import other style files */
+$primary: #9e0047;
+$primarybg: rgba(255, 255, 255, 0.5);
+$secondarybg: rgba(218, 243, 247, 0.5);
+$textcolor: #8898aa;
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $primary; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $primary; 
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+.file-area {
+    width: 100%;
+    height: 90%;
+    position: relative;
+    border: 2px dashed $primary;
+    input[type="file"] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      cursor: pointer;
+      &:focus {
+        outline: none;
+        border: 0;
+        outline-width: 0;
+      }
+    }
+    .file-dummy {
+      width: 100%;
+      height: 100%;
+      padding: 30px;
+      background: $primarybg;
+      text-align: center;
+      transition: background 0.3s ease-in-out;
+  
+      .success {
+        display: none;
+        color: $textcolor;
+      }
+      .default {
+        color: $textcolor;
+      }
+    }
+  
+    &:hover .file-dummy {
+      background: $primarybg;
+    }
+  
+    input[type="file"]:focus + .file-dummy {
+      outline: 2px solid;
+      outline: -webkit-focus-ring-color auto 5px;
+    }
+  
+    input[type="file"]:valid + .file-dummy {
+      background: $secondarybg;
+      .success {
+        display: inline-block;
+        color: black;
+      }
+      .default {
+        display: none;
+        color: black;
+      }
+    }
+  }
+  .w-auto {
+    width: auto !important;
+    padding: 10px;
+}
+.brdr {
+    border: 1px solid #a99a6f !important;
+    border-radius: 5px;
+    padding: 20px !important;
+    width: 100%;
+}
+.bg-gradient-maroon {
+  background: linear-gradient(87deg, #9e0047 0, #a99a6f 100%) !important;
+}
+agm-map {
+  height: 295px;
+}
+.btn-maroon {
+  color: #fff;
+  background-color: #9e0047;
+  border-color: #9e0047;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.event_class{
+  height: 50px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+input.form-control {
+  color: black;
+}
+.ngb-dp-header{
+  background-color: #8e825e !important;
+}
+.ngb-dp-weekdays{
+  background-color: #8e825e !important;
+}
+@font-face {
+  font-family: "FontAwesome";
+  font-weight: solid;
+  font-style : solid; 
+  src : url("./assets/vendor/@fortawesome/fontawesome-free/webfonts/fa-solid-900.eot") format("embedded-opentype"),
+       url("./assets/vendor/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2") format("woff2"),
+       url("./assets/vendor/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff") format("woff"),
+       url("./assets/vendor/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf") format("truetype"),
+       url("./assets/vendor/@fortawesome/fontawesome-free/webfonts/fa-solid-900.svg") format("svg"),
+       ;
+} 
+.iconClass{
+  font-family: FontAwesome;
+}
+.room-file-area{
+  height:150px;
+}
+.upload-area{
+  .col-4{
+    margin-bottom: 10px;
+  }
+}
+.uploadedImage{
+  height: 200px; padding: 10px;
+  width: 100%; object-fit: cover;
+}
+.addon-image{
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.ar{
+  direction: rtl;
+}
+.tooltip{
+  opacity: 1 !important;
+} 
+.dataTables_empty {
+  display: none;
+}

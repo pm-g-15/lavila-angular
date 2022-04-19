@@ -1,0 +1,496 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div>
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <h3 class="mb-0">Booking Details</h3>
+                            </div>
+                            <div class="col-8 text-right" *ngIf="booking">
+                                <button *ngIf="booking.bookingStatus.id == 3 && moment(booking.checkIn,'YYYY-MM-DD') < moment()" class="btn btn-sm btn-maroon" (click)="openModal(checkOutModal)"> 
+                                    <span>Check Out</span>
+                                </button>
+                                <button *ngIf="booking.bookingStatus.id == 3 && moment(booking.checkIn,'YYYY-MM-DD') <= moment()" (click)="openModal(noShowModal)" class="btn btn-sm btn-maroon">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="moveToNoShowLoading"></span>
+                                    <span *ngIf="!moveToNoShowLoading">Move to No Show</span>
+                                </button>
+                                
+                                <button class="btn btn-sm btn-maroon" *ngIf="((booking.bookingStatus.id !== 4) && (booking.bookingStatus.id !== 6) && (booking.bookingStatus.id !== 7))" (click)="cancelBooking(cancelModal)">Cancel Booking</button> 
+
+                                <button *ngIf="booking.bookingStatus.id <= 3" (click)="markAsInvalid()" class="btn btn-sm btn-maroon">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="markAsInvalidLoading"></span>
+                                    <span *ngIf="!markAsInvalidLoading">Mark as Invalid</span>
+                                </button> 
+
+                                <button  class="btn btn-sm btn-maroon" (click)="print()"> 
+                                    <i class="fa fa-print"></i>
+                                </button> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row" *ngIf="booking">
+                                <div class="col-lg-12">
+                                    <!-- <button class="float-right btn btn-sm btn-maroon" *ngIf="(booking.bookingStatus.id == 1 && (moment(booking.checkIn,'YYYY-MM-DD').diff(moment(),'days') > 0 ))" (click)="submitCancelBooking(checkOutModal)">Cancel Booking</button>  -->
+                                    <h3><span class="text-brown">LAVILLA-</span>{{booking.id}} ( {{booking.bookingStatus.name}} )</h3>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <fieldset class="border p-2">
+                                                <legend class="w-auto text-maroon ">General Info</legend>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <label class="text-brown">Booking Date</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p>{{moment(booking.createdAt).format('DD/MM/YYYY')}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <label class="text-brown">Check In</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p>{{moment(booking.checkIn).format('DD/MM/YYYY')}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <label class="text-brown">Check Out</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p>{{moment(booking.checkOut).format('DD/MM/YYYY')}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <label class="text-brown">Adult Count</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p>{{booking.adultCount}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <label class="text-brown">Child Count</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p>{{booking.childCount}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <label class="text-brown">Hotel Name</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p>{{booking.branch.name}}</p>
+                                                    </div>
+                                                </div>
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <fieldset class="border p-2">
+                                                <legend class="w-auto text-maroon ">User Information</legend>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p>{{booking.bookingUser?.fName+' '+booking.bookingUser?.lName}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Email</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p> {{booking.bookingUser?.email}} </p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Phone</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p> {{booking.bookingUser?.phone}} </p>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <fieldset class="border p-2">
+                                                <legend class="w-auto text-maroon ">Card Details</legend>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p>{{booking.finalPrice == 0 ? 'PAID USING LOYALITY' : booking.bookingCard?.name}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Card Number</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p> {{booking.bookingCard?.creditCard}} </p>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">Expiration Date</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p> {{booking.bookingCard?.expirationDate}} </p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-brown">CVC</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p> {{booking.bookingCard?.cvc}} </p>
+                                                    </div>
+                                                </div> -->
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4" *ngIf="booking.booking_cancellation">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <fieldset class="border p-2">
+                                                <legend class="w-auto text-maroon ">Cancellation Information</legend>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label class="text-brown">Reason</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <p>{{booking.booking_cancellation.note ? booking.booking_cancellation.note : "NA"}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label class="text-brown">Date</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <p> {{booking.booking_cancellation.date}} </p>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3" *ngIf="booking">
+                                <div class="col-lg-12">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <fieldset class="border p-2">
+                                                <legend class="w-auto text-maroon ">Payment Information</legend>
+                                                <div class="row">
+                                                    <div class="col-lg-4 mb-3" *ngFor="let room of booking?.bookingRoom;let k = index">
+                                                        <div class="card shadow">
+                                                            <div class="card-body">
+                                                                <fieldset class="border p-2">
+                                                                    <legend class="w-auto text-maroon ">{{room.room?.roomCategory?.name}}</legend>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <label class="text-brown">Bed Type</label>
+                                                                        </div>
+                                                                        <div class="col-md-8">
+                                                                            <p>{{room.room?.bedType?.name}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row" *ngIf="room.BBAOneCount > 0">
+                                                                        <div class="col-md-4">
+                                                                            <label class="text-brown">BBAOne</label>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                             
+                                                                            <p>{{room.BBAOnePrice}} X  {{room.BBAOneCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{room.BBAOnePrice*room.BBAOneCount}}</p>
+                                                                        </div>
+                                                                        <!-- <div class="col-md-4">
+                                                                            
+                                                                            <p>{{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.BBAOnePrice}} X  {{room.BBAOneCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.BBAOnePrice*room.BBAOneCount}}</p>
+                                                                        </div> -->
+                                                                    </div>
+                                                                    <div class="row" *ngIf="room.BBATwoCount > 0">
+                                                                        <div class="col-md-4">
+                                                                            <label class="text-brown">BBATwo</label>
+                                                                        </div>
+                                                                        <!-- <div class="col-md-4">
+                                                                            <p>{{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.BBATwoPrice}} X {{room.BBATwoCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.BBATwoPrice*room.BBATwoCount}}</p>
+                                                                        </div> -->
+                                                                        <div class="col-md-4">
+                                                                            <p>{{room.BBATwoPrice}} X {{room.BBATwoCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{room.BBATwoPrice*room.BBATwoCount}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row" *ngIf="room.ROAOneCount > 0">
+                                                                        <div class="col-md-4">
+                                                                            <label class="text-brown">ROAOne</label>
+                                                                        </div>
+                                                                        <!-- <div class="col-md-4">
+                                                                            <p>{{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.ROAOnePrice}} X {{room.ROAOneCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.ROAOnePrice*room.ROAOneCount}}</p>
+                                                                        </div> -->
+                                                                        <div class="col-md-4">
+                                                                            <p>{{room.ROAOnePrice}} X {{room.ROAOneCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{room.ROAOnePrice*room.ROAOneCount}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row" *ngIf="room.ROATwoCount > 0">
+                                                                        <div class="col-md-4">
+                                                                            <label class="text-brown">ROATwo</label>
+                                                                        </div>
+                                                                        <!-- <div class="col-md-4">
+                                                                            <p>{{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.ROATwoPrice}} X {{room.ROATwoCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{moment(booking.checkOut,'DD-MM-YYYY').subtract(1,'days').diff(moment(booking.checkIn,'DD-MM-YYYY'), 'days')*room.ROATwoPrice*room.ROATwoCount}}</p>
+                                                                        </div> -->
+                                                                        <div class="col-md-4">
+                                                                            <p>{{room.ROATwoPrice}} X {{room.ROATwoCount}}</p>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <p>QAR {{room.ROATwoPrice*room.ROATwoCount}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <h3 *ngIf=" room.bookingAddon.length > 0">Addons</h3>
+                                                                    <div  *ngIf=" room.bookingAddon.length > 0">
+                                                                        <div class="row" *ngFor="let addon of room.bookingAddon"> 
+                                                                            <div class="col-6">
+                                                                                <label>{{addon.addon.name}}</label>
+                                                                            </div>
+                                                                            <div class="col-6">
+                                                                                <span class="float-right">QAR {{addon.price}}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                    <hr/>
+                                                                    <div class="row"  > 
+                                                                        <div class="col-6">
+                                                                            <label>Sub Total</label>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <span class="float-right">QAR {{getSubTotal(room)}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row" *ngFor="let offer of room.bookingOffer"> 
+                                                                        <div class="col-6">
+                                                                            <label>Offer Applied {{offer.offerPercent }} %</label>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <span class="float-right">QAR -{{(getSubTotal(room)*offer.offerPercent)/100}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row"  > 
+                                                                        <div class="col-6">
+                                                                            <label>Total</label>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <span class="float-right">QAR {{getTotal(room)}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3" *ngIf="booking">
+                                <div class="col-lg-12">
+                                    <div class="card shadow">
+                                        <div class="card-body">
+                                            <div class="row"> 
+                                                <div class="col-9">
+                                                    <label>Total</label>
+                                                </div>
+                                                <div class="col-3 text-right">
+                                                    <span>QAR {{getGrandTotal()}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" *ngIf="booking.bookingPromoCode" > 
+                                                <div class="col-9">
+                                                    <label>Coupon Applied</label>
+                                                </div>
+                                                <div class="col-3 text-right">
+                                                    <span>QAR -{{(getGrandTotal()*booking.bookingPromoCode.discountPercent)/100}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" *ngIf="booking.bookingLoyalty?.loyaltyValue"> 
+                                                <div class="col-9">
+                                                    <label>Loyalty Applied</label>
+                                                </div>
+                                                <div class="col-3 text-right">
+                                                    <!-- <span>QAR -{{booking.bookingLoyalty.usedPoint*(1/booking.bookingLoyalty.loyaltyValue)}}</span> -->
+                                                    <span>QAR -{{getAppliedLoyalty(booking.bookingLoyalty.usedPoint*(1/booking.bookingLoyalty.loyaltyValue))}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row"> 
+                                                <div class="col-9">
+                                                    <label>Grand Total</label>
+                                                </div>
+                                                <div class="col-3 text-right">
+                                                    <span>QAR {{getFinalGrandTotal().toFixed(2)}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="container text-center p-8" *ngIf="!booking">
+                            <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page content -->
+<ng-template #checkOutModal let-modal > 
+    <div class="modal-body"  >
+        <div class="card bg-secondary shadow">
+            <form method="post">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Booking CheckOut</h3>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button class="btn btn-sm btn-maroon" (click)="checkout()" type="button" [disabled]="checkOutLoading">
+                                <span class="fa fa-circle-notch fa-spin" *ngIf="checkOutLoading"></span>
+                                <span *ngIf="!checkOutLoading">Submit</span> 
+                            </button> 
+                            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                <i class="fa fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">  
+                    <div class="form-group">
+                        <input class="form-control datepicker form-control-alternative" name="checkOut" ngbTooltip="Check Out Date"
+                                    ngbDatepicker #startd="ngbDatepicker" [minDate]="minDate" autocomplete="off"
+                                    [(ngModel)]="checkoutDate" (click)="startd.toggle()"
+                                    placeholder="Check Out" type="text">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control datepicker form-control-alternative" name="checkOutPrice" ngbTooltip="Check Out Price"
+                                    autocomplete="off" [(ngModel)]="checkOutPrice"  placeholder="Check Out Final Price" type="text">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<ng-template #cancelModal let-modal > 
+    <div class="modal-body"  >
+        <div class="card bg-secondary shadow">
+            <form method="post">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Booking Cancellation</h3>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button class="btn btn-sm btn-maroon" (click)="submitCancelBooking()" type="button" [disabled]="checkOutLoading">
+                                <span class="fa fa-circle-notch fa-spin" *ngIf="checkOutLoading"></span>
+                                <span *ngIf="!checkOutLoading">Submit</span> 
+                            </button> 
+                            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                <i class="fa fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">  
+                    <!-- <div class="form-group">
+                        <input class="form-control datepicker form-control-alternative" name="checkOut" ngbTooltip="Check Out Date"
+                                    ngbDatepicker #startd="ngbDatepicker" [minDate]="minDate" autocomplete="off"
+                                    [(ngModel)]="checkoutDate" (click)="startd.toggle()"
+                                    placeholder="Check Out" type="text">
+                    </div> -->
+                    <div class="form-group">
+                        <input class="form-control form-control-alternative" name="cancelReason" ngbTooltip="Cancel reason"
+                                    autocomplete="off" [(ngModel)]="cancellationReason"  placeholder="Cancellation reason" type="text">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<ng-template #noShowModal let-modal > 
+    <div class="modal-body"  >
+        <div class="card bg-secondary shadow">
+            <form method="post">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Booking Change to No show</h3>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button class="btn btn-sm btn-maroon" (click)="moveToNoShow()" type="button" [disabled]="moveToNoShowLoading">
+                                <span class="fa fa-circle-notch fa-spin" *ngIf="moveToNoShowLoading"></span>
+                                <span *ngIf="!moveToNoShowLoading">Submit</span> 
+                            </button> 
+                            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                <i class="fa fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">  
+                    <div class="form-group">
+                        <input class="form-control form-control-alternative" name="cancellationAmount" autocomplete="off" [(ngModel)]="cancellationAmount" placeholder="Cancellation Amount" type="number">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

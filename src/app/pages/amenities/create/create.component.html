@@ -1,0 +1,64 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form method="post" *ngIf="amenitiesForm" [formGroup]="amenitiesForm" (submit)="createAmenities(amenitiesForm.value)">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">Create Amenities</h3>
+                            </div>
+                            <div class="col-2 text-right">
+                                <button class="btn btn-sm btn-maroon" [disabled]="saveLoading || !amenitiesForm.valid" type="submit">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Save</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="text" id="name" name="name" formControlName="name" class="form-control form-control-alternative" placeholder="Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" id="nameAr" name="nameAr" formControlName="nameAr" class="form-control form-control-alternative ar" placeholder="Name in Arabic" />
+                                    </div> 
+
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <select name="country" id="country" class="form-control form-control-alternative"  formControlName="amenitiesTypeId">
+                                            <option value="null" disabled>Amenities Type</option>
+                                            <option [value]="amenitiesType.id" *ngFor="let amenitiesType of amenitiesTypes">{{amenitiesType.name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select class="form-control form-control-alternative iconClass" formControlName="amenitiesIconId">
+                                            <option value="null" disabled>Select Icon</option>
+                                            <option [value]="amenitiesIcon.id" *ngFor="let amenitiesIcon of amenitiesIcons" [innerHTML]="amenitiesIcon.value"></option> 
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="container text-center p-8" *ngIf="!amenitiesForm">
+                    <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+        <a routerLink="create" class="btn btn-neutral btn-icon mr-4">
+          <span class="btn-inner--icon">
+            <i class="fa fa-plus"></i>
+          </span>
+          <span class="btn-inner--text">Create Offer</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid mt--7">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card shadow">
+          <div class="card-body">
+            <div class="table-responsive">
+              <!-- Projects table -->
+              <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" style="width: 100%;" class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr> 
+                    <th scope="col" style="width: 70%;">Name</th> 
+                    <th scope="col" style="width: 10%;">Offer Percentage</th> 
+                    <th scope="col" style="width: 10%;">Status</th> 
+                    <th scope="col" style="width: 10%;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="offers.length != 0">
+                  <tr  *ngFor="let offer of offers"> 
+                    <td scope="row" style="width:70%;">
+                      {{offer.room.branch.name+" &rarr; "+offer.room.roomCategory.name }}
+                    </td>
+                    <td scope="row" style="width:10%;">
+                      {{ offer.offerPercent }}
+                    </td>
+                    <td scope="row" style="width:10%;">
+                        <i ngbTooltip="Disabled" *ngIf="!offer.status" class="fa fa-times-circle fa-lg text-danger"></i>
+                        <i ngbTooltip="Enabled" *ngIf="offer.status" class="fa fa-check-circle fa-lg text-success"></i> 
+                    </td>
+                  <td style="width: 10%;"> 
+                    <a [routerLink]="['update',offer.id]"  ngbTooltip="Edit" class="btn btn-neutral btn-icon">
+                      <i class="fa fa-pencil-alt"></i>
+                    </a>
+                    <button (click)="deleteOffer(offer.id)"  ngbTooltip="Delete" [disabled]="loadingId == offer.id" class="btn btn-neutral btn-icon">
+                      <i class="fa fa-trash" *ngIf="loadingId != offer.id"></i>
+                      <i class="fa fa-circle-notch fa-spin" *ngIf="loadingId == offer.id" ></i>
+                    </button>
+                  </td>
+                </tr> 
+                </tbody>
+                <tbody *ngIf="offers.length == 0">
+                  <tr>
+                    <td colspan="3" class="no-data-available">No data!</td>
+                  </tr>
+                <tbody> 
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

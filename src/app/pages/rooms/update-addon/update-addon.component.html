@@ -1,0 +1,234 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div >
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">Update Room Addon</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                                <a class="btn btn-sm btn-maroon"  routerLink="/rooms">
+                                    <span>Complete</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <fieldset class="brdr p-2">
+                                            <legend class="w-auto text-maroon">Addon</legend>
+                                            <button class="btn btn-sm btn-maroon mb-2" type="button"
+                                                (click)="openModal(addonModal)">Create</button>
+                                                <button class="btn btn-sm btn-maroon mb-2" type="button"
+                                                    (click)="openChooseModal(addonChooseModal)" [disabled]="chooseAddonLoading">
+                                                    <span class="fa fa-circle-notch fa-spin" *ngIf="chooseAddonLoading"></span>
+                                                    <span *ngIf="!chooseAddonLoading">Choose From Existing</span>
+                                                </button>
+                                            <div class="row">
+                                                <div class="col-lg-4 mb-2" *ngFor="let a of addons;let i = index">
+                                                    <button [disabled]="removedAddonIndex == i" class="btn btn-sm btn-maroon float-right mr-2 mt-1" (click)="removeAddon(a.id,i)" >
+                                                        <i class="fa fa-times-circle" [class.fa-times-circle] = "removedAddonIndex != i" [class.fa-circle-notch] = "removedAddonIndex == i" [class.fa-spin] = "removedAddonIndex == i"></i>
+                                                    </button>
+                                                        <div class="brdr ">
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <div class="form-group">
+                                                                    <label>{{a.name}} </label> 
+                                                                </div> 
+                                                                <div class="form-group">
+                                                                    <label>{{a.nameAr}} </label> 
+                                                                </div> 
+                                                                <div class="form-group">
+                                                                    <p>{{a.description}}</p> 
+                                                                </div> 
+                                                                <div class="form-group">
+                                                                    <p>{{a.descriptionAr}}</p> 
+                                                                </div> 
+                                                                <div class="form-group">
+                                                                    <label>Price: {{a.price}}</label>
+                                                                </div>
+                                                                <div class="form-group" *ngIf="a.multiple">
+                                                                    <label>Multiple</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6 ">
+                                                                <img src="{{ a.image}}" class="addon-image" alt="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #addonModal let-modal>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <i class="fa fa-times-circle"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="card bg-secondary shadow">
+            <form method="post" *ngIf="addonForm" [formGroup]="addonForm">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Addon</h3>
+                        </div>
+                        <div class="col-4 text-right"> 
+                            <button class="btn btn-sm btn-primary" [disabled]="saveLoading || !addonForm.valid"
+                                    type="button" (click)="saveAddon()">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Update</span>
+                                </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="brdr mb-2">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <input type="text" name="name" formControlName="name" class="form-control form-control-alternative"
+                                                placeholder="Name" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="nameAr" formControlName="nameAr" class="form-control form-control-alternative ar"
+                                                placeholder="Name in Arabic" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <textarea type="text" rows="8" formControlName="description" name="description"
+                                                class="form-control form-control-alternative"
+                                                placeholder="Description"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <textarea type="text" rows="8" formControlName="descriptionAr" name="descriptionAr"
+                                                class="form-control form-control-alternative ar"
+                                                placeholder="Description in Arabic"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <input type="text" name="price" formControlName="price" class="form-control form-control-alternative"
+                                                placeholder="Price" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            
+                                            <div
+                                            class="custom-control custom-control-alternative custom-checkbox mb-3">
+                                            <input class="custom-control-input"
+                                                id="customCheck " formControlName="multiple"
+                                                name="amenities" type="checkbox">
+                                            <label class="custom-control-label"
+                                                for="customCheck ">Multiple</label>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group file-area room-file-area">
+                                            <input type="file" formControlName="roomAddonImages" (change)="changeFile($event.target.files[0])"  name="introSlider" required="required" />
+                                            <div class="file-dummy">
+                                                <div class="success">Great, your image is
+                                                    selected. Keep on.</div>
+                                                <div class="default">Please select images
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <img *ngIf="imageData!=null" [src]="imageData"
+                                            class="addon-image" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<ng-template #addonChooseModal let-modal>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <i class="fa fa-times-circle"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="card bg-secondary shadow">
+            <div>
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Addon</h3>
+                        </div>
+                        <div class="col-4 text-right"> 
+                            <button class="btn btn-sm btn-primary" [disabled]="saveChooseLoading || (selectedAddon == null)"
+                                    type="button" (click)="createChooseAddon()">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveChooseLoading"></span>
+                                    <span *ngIf="!saveChooseLoading">Choose</span>
+                                </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-4 mb-2" *ngFor="let a of suggestedAddons;let i = index"> 
+                            <div class="brdr">
+                                <div class="row">
+                                    <div class="custom-control custom-control-alternative custom-radio mb-3">
+                                        <input name="custom-radio-1" value="{{i}}" (change)="changeChooseAddon($event.target.value)" class="custom-control-input" id="customRadio{{i}}" type="radio">
+                                        <label class="custom-control-label" for="customRadio{{i}}">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <img src="{{ a.path}}" class="img img-responsive" width="150" alt="">
+                                                    <br/>  
+                                                    <p>{{a.name}} </p>  
+                                                    <p>{{a.nameAr}} </p> 
+                                                    <p>{{a.description}}</p> 
+                                                    <p>{{a.descriptionAr}}</p> 
+                                                    <p>Price: {{a.price}}</p> 
+                                                    <p *ngIf="a.multiple">Multiple</p>
+                                                </div> 
+                                            </div>
+                                        </label>
+                                      </div>
+                                </div>
+                                
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

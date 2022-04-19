@@ -1,0 +1,63 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form method="post" *ngIf="offersForm" [formGroup]="offersForm"
+                    (submit)="createOffer(offersForm.value)">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">Create Event</h3>
+                            </div>
+                            <div class="col-2 text-right">
+                                <button class="btn btn-sm btn-maroon" [disabled]="saveLoading || !offersForm.valid"
+                                    type="submit">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Save</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="number" id="offerPercent" name="offerPercent" formControlName="offerPercent" class="form-control form-control-alternative" placeholder="Offer Percentage" />
+                                    </div>
+                                    <div class="form-group">
+                                        <select name="roomId" id="roomId"  formControlName="roomId"
+                                        class="form-control form-control-alternative " placeholder="Room">
+                                            <option value="">Select Room</option>
+                                            <option *ngFor="let room of rooms" value="{{room.id}}">{{room.branch.name+" &rarr; "+room.roomCategory.name}}</option>
+                                        </select>
+                                    </div>
+                                </div> 
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <select name="status" id="status"  formControlName="status"
+                                        class="form-control form-control-alternative " placeholder="Status">
+                                            <option value="true">Enable</option>
+                                            <option value="false">Disable</option> 
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="container text-center p-8" *ngIf="!offersForm">
+                    <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

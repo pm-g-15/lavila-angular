@@ -1,0 +1,155 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form method="post" *ngIf="roomForm" [formGroup]="roomForm"  >
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">Create Room</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                                <button class="btn btn-sm btn-primary" [disabled]="saveLoading || !roomForm.valid"
+                                    type="button" (click)="saveRoomAndUpdateAddon()">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Save & Next</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="row">
+                                        <div class="col-lg-6"> 
+                                            <div class="form-group">
+                                                <textarea type="text" id="description"  ngbTooltip="Description"  rows="8"  formControlName="description" name="description" class="form-control form-control-alternative" placeholder="Description"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <textarea type="text" id="descriptionAr"  ngbTooltip="Description Arabic" rows="8"  formControlName="descriptionAr" name="descriptionAr" class="form-control form-control-alternative ar" placeholder="Description in Arabic"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <select name="category" id="category"  ngbTooltip="Category" formControlName="roomCategoryId" class="form-control form-control-alternative">
+                                                    <option value="null">Select Category</option>
+                                                    <option [value]="roomCategory.id"
+                                                        *ngFor="let roomCategory of roomCategories">
+                                                        {{roomCategory.name}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <select name="branch" id="branch"  ngbTooltip="Branch" formControlName="branchId" class="form-control form-control-alternative">
+                                                    <option value="null">Select Branch</option>
+                                                    <option [value]="branch.id" *ngFor="let branch of branches">{{branch.name}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <select name="bed_type" id="bed_type"  ngbTooltip="Bed Type" formControlName="bedTypeId" class="form-control form-control-alternative">
+                                                    <option value="null">Select Bed Type</option>
+                                                    <option [value]="bedType.id"
+                                                        *ngFor="let bedType of bedTypes">
+                                                        {{bedType.name}}</option> 
+                                                </select>
+                                            </div> 
+                                            <div class="form-group">
+                                                <input type="text" id="adult-count"  ngbTooltip="Adult Count" name="adult_count" formControlName="adultCount"
+                                                    class="form-control form-control-alternative"
+                                                    placeholder="Adult Count" />
+                                            </div> 
+                                            <div class="form-group">
+                                                <input type="text" id="child-count"  ngbTooltip="Child Count" name="child_count" formControlName="childCount"
+                                                    class="form-control form-control-alternative"
+                                                    placeholder="Child Count" />
+                                            </div> 
+                                            <div class="form-group">
+                                                <input type="text" id="count" name="count"  ngbTooltip="Room Count" formControlName="count"
+                                                    class="form-control form-control-alternative"
+                                                    placeholder="Room Count" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <fieldset class="brdr p-2">
+                                            <legend class="w-auto text-maroon">Pricing Percentage</legend>
+
+                                            <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="form-group">
+                                                        <input type="text" id="child-count"  ngbTooltip="BB-SGL Percentage" name="BBA_one_percent" formControlName="BBAOnePercent"
+                                                            class="form-control form-control-alternative"
+                                                            placeholder="BB-SGL Percentage" />
+                                                    </div> 
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="form-group">
+                                                        <input type="text" id="child-count"  ngbTooltip="RO-DBL Percentage" name="ROA_two_percent" formControlName="ROATwoPercent"
+                                                            class="form-control form-control-alternative"
+                                                            placeholder="RO-DBL Percentage" />
+                                                    </div> 
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="form-group">
+                                                        <input type="text" id="child-count"  ngbTooltip="BB-DBL Percentage" name="BBA_two_percent" formControlName="BBATwoPercent"
+                                                            class="form-control form-control-alternative"
+                                                            placeholder="BB-DBL Percentage" />
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="row">
+                                        <fieldset class="brdr p-2">
+                                            <legend class="w-auto text-maroon">Amenities</legend>
+
+                                            <div class="row">
+                                                <div class="col-lg-4" *ngFor="let amenity of amenities">
+                                                    <div
+                                                        class="custom-control custom-control-alternative custom-checkbox mb-3">
+                                                        <input class="custom-control-input"
+                                                            id="customCheck{{amenity.id}}" (change)="changeAmenities($event,amenity)"  name="amenities" type="checkbox">
+                                                        <label class="custom-control-label"
+                                                            for="customCheck{{amenity.id}}">{{amenity.name}}</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4  upload-area">
+
+                                    <div class="form-group file-area room-file-area">
+                                        <input type="file" name="roomImages" accept="image/*" id="images" multiple
+                                            (change)="changeFile($event.target.files )" />
+                                        <div class="file-dummy">
+                                            <div class="success">Great, your image is selected. Keep on.</div>
+                                            <div class="default">Please select images</div>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-6" *ngFor="let image of imageData">
+                                            <img [src]="image " class="uploadedImage" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="container text-center p-8" *ngIf="!roomForm">
+                    <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

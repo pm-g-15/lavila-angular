@@ -1,0 +1,218 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form method="post" *ngIf="propertyForm" [formGroup]="propertyForm" >
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">Update Property</h3>
+                            </div>
+                            <div class="col-2 text-right">
+                                <button class="btn btn-sm btn-maroon" type="button" [disabled]="saveLoading || !propertyForm.valid"
+                                type="button" (click)="saveProperty(propertyForm.value)">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Save & Next</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class=" row">
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <input type="text" id="name" name="name" formControlName="name"
+                                                class="form-control form-control-alternative" placeholder="Name" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" id="nameAr" name="nameAr" formControlName="nameAr"
+                                                class="form-control form-control-alternative ar"
+                                                placeholder="Name in Arabic" />
+                                        </div>
+                                        <div class="form-group">
+                                            <textarea name="description" formControlName="description" class="form-control form-control-alternative"
+                                                rows="5" placeholder="Description"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <textarea name="descriptionAr" formControlName="descriptionAr"
+                                                class="form-control form-control-alternative ar" rows="5"
+                                                placeholder="Description in Arabic"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <label class="custom-toggle  ml-3">
+                                                    <input type="checkbox" checked  formControlName="carParking">
+                                                    <span class="custom-toggle-slider   rounded-circle"></span>
+                                                </label>
+                                                <label class=" pl-3">Car Parking</label>
+                                            </div> 
+                                        </div>
+                                        <div class="form-group"> 
+                                            <div class="row">
+                                                <label class="custom-toggle  ml-3">
+                                                    <input type="checkbox" checked formControlName="furnished">
+                                                    <span class="custom-toggle-slider   rounded-circle"></span>
+                                                </label>
+                                                <label class=" pl-3">Furnished</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <select name="property_purpose" id="property_purpose" formControlName="propertyPurposeId"
+                                                class="form-control form-control-alternative">
+                                                <option value="null">Property Purpose</option>
+                                                <option value="{{pp.id}}" *ngFor="let pp of propertyPurpose">{{pp.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <div style="display: inline-flex;">
+                                                <button class="btn btn-maroon" type="button"
+                                                    (click)="minusBathRoom() ">-</button>
+                                                <input type="text" name="bathroom_count" (keydown)="block($event)"
+                                                formControlName="bathroomNo"    placeholder="Bath Room"
+                                                    class="btn form-control form-control-alternative">
+                                                <button class="btn btn-maroon" type="button"
+                                                    (click)="plusBathRoom()">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            
+                                            <div style="display: inline-flex;">
+                                                <button class="btn btn-maroon" type="button"
+                                                    (click)="minusBedRoom()">-</button>
+                                                <input type="text" name="bedroom_count" (keydown)="block($event)"
+                                                formControlName="bedroomNo"    placeholder="Bed Room"
+                                                    class="btn form-control form-control-alternative">
+                                                <button class="btn btn-maroon" type="button"
+                                                    (click)="plusBedRoom()">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="number" id="plotArea" name="plotArea" formControlName="plotArea"
+                                                class="form-control form-control-alternative" placeholder="Plot Area" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="number" id="phone" name="phone" formControlName="phone"
+                                                class="form-control form-control-alternative" placeholder="Phone" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="email" id="email" name="email" formControlName="email"
+                                                class="form-control form-control-alternative" placeholder="Email" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="number" id="price" name="price" formControlName="price"
+                                                class="form-control form-control-alternative" placeholder="Price" />
+                                        </div>
+                                        <div class="form-group">
+                                            <select name="property_type" id="property_type"  formControlName="propertyTypeId"
+                                                class="form-control form-control-alternative">
+                                                <option value="null">Property Type</option>
+                                                <option value="{{pt.id}}" *ngFor="let pt of propertyType">{{pt.name}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <select name="property_looking_for" id="property_looking_for" formControlName="propertyLookingForId"
+                                                class="form-control form-control-alternative">
+                                                <option value="null">Property Looking For</option>
+                                                <option value="{{plf.id}}" *ngFor="let plf of propertyLookingFor">{{plf.name}}</option> 
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <select name="location" id="location" formControlName="propertyLocationId"
+                                                class="form-control form-control-alternative">
+                                                <option value="null">Location</option>
+                                                <option value="{{pl.id}}" *ngFor="let pl of propertyLocation">{{pl.name}}</option> 
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="col-lg-6">
+                                <fieldset class="brdr p-2">
+                                    <legend class="w-auto text-maroon">Addresss</legend>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <textarea name="address" class="form-control form-control-alternative" formControlName="address"
+                                                    rows="5" placeholder="Address"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <textarea name="addressAr"
+                                                    class="form-control form-control-alternative ar" rows="5" formControlName="addressAr"
+                                                    placeholder="Address in Arabic"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <agm-map [latitude]="propertyForm.value.lat" [longitude]="propertyForm.value.lng">
+                                                <agm-marker [latitude]="propertyForm.value.lat" [longitude]="propertyForm.value.lng"
+                                                    [markerDraggable]="true" (dragEnd)="markerDragEnd( $event)"> 
+                                                </agm-marker>
+                                            </agm-map>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                                <fieldset class="brdr p-2">
+                                    <legend class="w-auto text-maroon">Amenities</legend>
+
+                                    <div class="row">
+                                        <div class="col-lg-4" *ngFor="let amenity of amenities">
+                                            <div class="custom-control custom-control-alternative custom-checkbox mb-3">
+                                                <input class="custom-control-input"
+                                                            id="customCheck{{amenity.id}}" (change)="changeAmenities($event,amenity)" [checked]="property.amenityId.indexOf(amenity.id) != -1"  name="amenities" type="checkbox">
+                                                        <label class="custom-control-label"
+                                                            for="customCheck{{amenity.id}}">{{amenity.name}}</label> 
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="row">
+                            
+                            <fieldset class="brdr p-2">
+                                <legend class="w-auto text-maroon">Property Images</legend>
+                                <div class="row">
+                                    <div class="col-lg-3"> 
+                                            <div class="file-area">
+                                                <input type="file" name="images" id="images" multiple
+                                            (change)="changeFile($event.target.files )"  />
+                                                <div class="file-dummy">
+                                                    <div class="success">Great, your image is selected. Keep
+                                                        on.</div>
+                                                    <div class="default">Please select image</div>
+                                                </div> 
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <div class="row">
+                                            <div class="col-md-3" *ngFor="let image of propertyForm.value.propertyImages;let i = index">
+                                                <a href="javascript:;" (click)="removePropertyImage(image.id,i)" class="float-right"><i class="fa fa-times-circle"></i></a>
+                                                <img [src]="image.path" class="uploadedImage" alt="">
+                                            </div> 
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+::-webkit-scrollbar {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+::-webkit-scrollbar-button {
+  background: white;
+}
+::-webkit-scrollbar-track-piece {
+  background: white;
+}
+::-webkit-scrollbar-thumb {
+  background: #9e0047;
+}
+
+.custome-datepicker {
+  .ng-star-inserted {
+    position: absolute;
+    z-index: 9;
+    background-color: #ffffff;
+  }
+  .custom-day {
+    &.range {
+      background-color: #5e72e4 !important;
+    }
+  }
+}

@@ -1,0 +1,102 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form *ngIf="branchForm" method="post" [formGroup]="branchForm" (submit)="createBranch(branchForm.value)">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">Create Branch</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                                <button class="btn btn-sm btn-maroon" [disabled]="saveLoading || !branchForm.valid" type="submit">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Save</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control  form-control-alternative" formControlName="name" placeholder="Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control  form-control-alternative ar" formControlName="nameAr" placeholder="Name in Arabic">
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="address" class="form-control  form-control-alternative"
+                                            id="address" rows="5" placeholder="Address" formControlName="address"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="addressAr" class="form-control  form-control-alternative ar"
+                                            id="address" rows="5" placeholder="Address in Arabic" formControlName="addressAr"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <select name="user" id="user" formControlName="selectedUserId" class="form-control form-control-alternative">
+                                            <option value="null" disabled>Select User</option>
+                                            <option value="{{user.id}}"   *ngFor="let user of users">{{user.fName+' '+user.lName}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select name="status" id="status" formControlName="status" class="form-control form-control-alternative">
+                                            <option [value]="null" disabled>Select Status</option>
+                                            <option [value]="true"  >Enabled</option>
+                                            <option [value]="false"  >Disabled</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="description" class="form-control  form-control-alternative"
+                                            id="description" rows="7" placeholder="Description" formControlName="description"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="descriptionAr" class="form-control  form-control-alternative ar"
+                                            id="description" rows="7" placeholder="Description in Arabic" formControlName="descriptionAr"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <agm-map [latitude]="branch.lat" [longitude]="branch.lng">
+                                            <agm-marker [latitude]="branch.lat" [longitude]="branch.lng"
+                                                [markerDraggable]="true" (dragEnd)="markerDragEnd(branch, $event)">
+                                                <agm-info-window>
+                                                    <strong>InfoWindow content</strong>
+                                                </agm-info-window>
+                                            </agm-marker>
+                                        </agm-map>
+                                    </div>
+                                    <div class="form-group file-area room-file-area">
+                                        <input type="file" name="branchImages" accept="image/*" id="images" multiple
+                                            (change)="changeFile($event.target.files )" />
+                                        <div class="file-dummy">
+                                            <div class="success">Great, your image is selected. Keep on.</div>
+                                            <div class="default">Please select images</div>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-6" *ngFor="let image of imageData">
+                                            <img [src]="image " class="uploadedImage" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="container text-center p-8" *ngIf="!branchForm">
+                    <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

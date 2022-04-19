@@ -1,0 +1,91 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form method="post" *ngIf="promoCodeForm" [formGroup]="promoCodeForm">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">Create Promo Code</h3>
+                            </div>
+                            <div class="col-2 text-right">
+                                <button class="btn btn-sm btn-maroon"  [disabled]="saveLoading || !promoCodeForm.valid" (click)="submitForm(promoCodeForm.value)" type="button">
+                                  <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                  <span *ngIf="!saveLoading">Update</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                          <div class="row">
+                            <div class="col-lg-6">
+                              <div class="form-group ">
+                                <input type="text" id="services-en-name" formControlName="code" name="code" class="form-control form-control-alternative" placeholder="Promo Code" />
+                              </div>
+                              <div class="form-group ">
+                                <div class="input-group input-group-alternative mb-4">
+                                  <textarea type="text" id="services-ar-name" formControlName="description" name="description" class="form-control form-control-alternative " rows="6" placeholder="Code Description" ></textarea>
+                                </div> 
+                              </div>
+                              <div class="form-group ">
+                                <div class="input-group input-group-alternative mb-4">
+                                  <textarea type="text" id="services-ar-name-ar" formControlName="descriptionAr" name="descriptionAr" class="form-control form-control-alternative ar" rows="6" placeholder="Code Description in Arabic" ></textarea>
+                                </div> 
+                              </div>
+                              <div class="form-group ">
+                                <input type="number" id="services-max-hour" formControlName="discountPercent" name="discountPercent" class="form-control form-control-alternative " placeholder="Discount Percent" /> 
+                              </div>
+                              <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                  </div>
+                                  <input class="form-control datepicker" [minDate]="minDate" formControlName="expDate" name="expDate" ngbDatepicker
+                                    #d="ngbDatepicker" (click)="d.toggle()" placeholder="Exp Date" type="text">
+                                </div> 
+                              </div>
+                              <div class="form-group">
+                                <select name="status" id="status"  formControlName="status" class="form-control form-control-alternative">
+                                  <option value="null" disabled>Select Status</option>
+                                  <option value="1">Enabled</option>
+                                  <option value="0">Disabled</option>
+                                </select> 
+                              </div>
+                            </div>
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <select name="branchId" formControlName="branchId" id="branchId" class="form-control form-control-alternative" >
+                                  <option value="null" disabled>Select branch</option>
+                                  <option value="{{branch.id}}" *ngFor="let branch of branches">{{branch.name}} </option>
+                                </select> 
+                              </div>
+                              <div class="form-group">
+                                <div class="custom-control custom-control-alternative custom-checkbox mb-3">
+                                  <input class="custom-control-input" formControlName="global"  id="customCheck5" type="checkbox">
+                                  <label class="custom-control-label" for="customCheck5">Global assign</label>
+                                </div> 
+                              </div>
+                              <div class="form-group" *ngIf="!promoCodeForm.value.global">
+                                <select name="users" formControlName="userIds" id="users" class="form-control form-control-alternative" multiple style="height:375px">
+                                  <option value="null" disabled>Select Users</option>
+                                  <option value="{{user.id}}" *ngFor="let user of users">{{user.fName+' '+user.lName}} </option>
+                                </select> 
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

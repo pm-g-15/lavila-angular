@@ -1,0 +1,201 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body"></div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card shadow">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-2">
+              <div class="form-group">
+                <select
+                  name="hotel"
+                  id="hotel"
+                  class="form-control form-control-alternative"
+                  [(ngModel)]="allBookingSearch.status"
+                >
+                  <option selected disabled value="">Select Status</option>
+                  <!-- <option value="user-detail-pending">
+                    User Detail Pending
+                  </option> -->
+                  <!-- <option value="payment-pending">Payment Pending</option> -->
+                  <option value="completed">Confirmed</option>
+                  <!-- <option value="upcoming">Upcoming</option> -->
+                  <option value="cancelled">Cancelled</option>
+                  <option value="no-show">No Show</option>
+                  <!-- <option value="invalid">Invalid</option> -->
+                  <!-- <option value="checkout">Checkout</option> -->
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <div class="form-group">
+                <select
+                  name="hotel"
+                  id="hotel"
+                  class="form-control form-control-alternative"
+                  [(ngModel)]="allBookingSearch.branch"
+                >
+                  <option selected disabled value="">Select Branch</option>
+                  <option [value]="branch.id" *ngFor="let branch of branches">
+                    {{ branch.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <div class="form-group custome-datepicker">
+                <input
+                  class="form-control datepicker form-control-alternative"
+                  name="checkIn"
+                  autocomplete="off"
+                  (click)="onDateEDit()"
+                  placeholder="Check In"
+                  type="text"
+                  value="{{ checkInNew.from }}  {{ checkInNew.to }}"
+                />
+                <!-- <form
+                  [formGroup]="myDateForm"
+                  (ngSubmit)="onSubmit(myDateForm)"
+                > -->
+                <div *ngIf="isSelectDate">
+                  <ngb-datepicker
+                    #dp
+                    (select)="onDateSelection($event)"
+                    [displayMonths]="2"
+                    [dayTemplate]="t"
+                    outsideDays="hidden"
+                    class=""
+                  >
+                  </ngb-datepicker>
+
+                  <ng-template #t let-date let-focused="focused">
+                    <span
+                      class="custom-day"
+                      [class.focused]="focused"
+                      [class.range]="isRange(date)"
+                      [class.faded]="isHovered(date) || isInside(date)"
+                      (mouseenter)="hoveredDate = date"
+                      (mouseleave)="hoveredDate = null"
+                    >
+                      {{ date.day }}
+                    </span>
+                  </ng-template>
+                </div>
+
+                <br />
+                <!-- <button type="submit" class="btn btn-sm btn-primary">
+                    Submit
+                  </button> -->
+                <!-- </form> -->
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <div class="form-group">
+                <input
+                  type="text"
+                  class="form-control form-control-alternative"
+                  [(ngModel)]="allBookingSearch.fName"
+                  placeholder="Guest name"
+                />
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <div class="form-group">
+                <input
+                  type="number"
+                  class="form-control form-control-alternative"
+                  [(ngModel)]="allBookingSearch.booking"
+                  placeholder="Booking ID"
+                />
+              </div>
+            </div>
+            <div class="col-lg-2 ml-auto">
+              <div class="form-group text-center">
+                <button class="btn btn-maroon" (click)="search()">
+                  Search
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table
+                datatable
+                [dtOptions]="cBDtOptions"
+                [dtTrigger]="cBDtTrigger"
+                style="width: 100%"
+                class="table align-items-center table-flush"
+              >
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" style="width: 10%">Booking Id</th>
+                    <th scope="col" style="width: 10%">Check In</th>
+                    <th scope="col" style="width: 10%">Check Out</th>
+                    <th scope="col" style="width: 10%">Guest Name</th>
+                    <th scope="col" style="width: 10%">Booked On</th>
+                    <th scope="col" style="width: 10%">Price</th>
+                    <th scope="col" style="width: 10%">Status</th>
+                    <th scope="col" style="width: 20%">Room Categories</th>
+                    <th scope="col" style="width: 10%">Actions</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="allBooking.length != 0">
+                  <tr *ngFor="let cb of allBooking">
+                    <th scope="row" style="width: 10%">
+                      {{ cb.bookingId }}
+                    </th>
+                    <td style="width: 10%">
+                      {{ cb.checkIn }}
+                    </td>
+                    <td style="width: 10%">
+                      {{ cb.checkOut }}
+                    </td>
+                    <td style="width: 10%">
+                      {{ cb.fName }}
+                    </td>
+                    <td style="width: 10%">
+                      {{ cb.createdAt }}
+                    </td>
+                    <td style="width: 10%">
+                      {{ cb.finalPrice }}
+                    </td>
+                    <td style="width: 10%">
+                      {{
+                        cb.status == "Completed" &&
+                        moment() < moment(cb.checkIn, "DD-MM-YYYY")
+                          ? "Upcoming"
+                          : cb.status
+                      }}
+                    </td>
+                    <td style="width: 20%">
+                      {{ cb.roomCategories }}
+                    </td>
+                    <td style="width: 10%">
+                      <a
+                        [routerLink]="['/booking/view', cb.id]"
+                        class="btn btn-neutral btn-icon"
+                      >
+                        <i class="fa fa-eye"></i>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+
+                <tbody *ngIf="allBooking.length == 0">
+                  <tr>
+                    <td colspan="3" class="no-data-available">No data!</td>
+                  </tr>
+                </tbody>
+
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

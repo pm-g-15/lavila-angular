@@ -1,0 +1,84 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <form method="post" *ngIf="eventsForm" [formGroup]="eventsForm"
+                    (submit)="createEvent(eventsForm.value)">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-10">
+                                <h3 class="mb-0">Create Event</h3>
+                            </div>
+                            <div class="col-2 text-right">
+                                <button class="btn btn-sm btn-maroon" [disabled]="saveLoading || !eventsForm.valid"
+                                    type="submit">
+                                    <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                    <span *ngIf="!saveLoading">Save</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="text" id="name" name="name" formControlName="name"
+                                            class="form-control form-control-alternative" placeholder="Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" id="nameAr" name="nameAr" formControlName="nameAr"
+                                            class="form-control form-control-alternative ar" placeholder="Name in Arabic" />
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea type="text" id="description" rows="5" name="description"
+                                            formControlName="description" class="form-control form-control-alternative"
+                                            placeholder="Description"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea type="text" id="descriptionAr" rows="5" name="descriptionAr"
+                                            formControlName="descriptionAr" class="form-control form-control-alternative ar"
+                                            placeholder="Description in Arabic"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" id="date"  [minDate]="minDate"  name="date" formControlName="date"
+                                            class="form-control form-control-alternative datepicker" ngbDatepicker
+                                            #d="ngbDatepicker" (click)="d.toggle()" autocomplete="off"
+                                            placeholder="Date" />
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-3"> 
+                                        <div class=" file-area">
+                                            <input type="file" name="image" id="image" required="required"
+                                                (change)="changeFile($event.target.files[0])" />
+                                            <div class="file-dummy">
+                                                <div class="success">Great, your image is selected. Keep
+                                                    on.</div>
+                                                <div class="default">Please select image</div>
+                                            </div>
+                                        </div> 
+                                </div>
+                                    <div class="col-lg-3">
+                                        <img *ngIf="eventsForm.value.image!=null" [src]="eventsForm.value.image"
+                                            class="uploadedImage" alt="">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="container text-center p-8" *ngIf="!eventsForm">
+                    <h1><span class="fa fa-circle-notch fa-spin fa-lg "></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

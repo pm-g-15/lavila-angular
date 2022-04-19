@@ -1,0 +1,214 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+
+            <button (click)="openModal(nearestCategoryModal)" class="btn btn-neutral btn-icon mr-4">
+                <span class="btn-inner--icon">
+                    <i class="fa fa-plus"></i>
+                </span>
+                <span class="btn-inner--text">Create Nearest Category</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div>
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">Update Nearest Items</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                                <a class="btn btn-sm btn-maroon" [routerLink]="['/branches']">
+                                    <span>Complete</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ngb-accordion [closeOthers]="true" activeIds="static-0">
+                            <ngb-panel id="static-{{i}}" *ngFor="let item of categoryList;let i = index">
+                                <ng-template ngbPanelHeader>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <button ngbPanelToggle
+                                            class="btn btn-link container-fluid text-left pl-0">{{item.name}}({{item.nameAr}})</button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger ml-2 float-right"
+                                            (click)="deleteNearestCategory(item.id)">Delete</button>
+                                    </div>
+                                </ng-template>
+                                <ng-template ngbPanelContent>
+                                    <fieldset class="brdr p-2">
+                                        <legend class="w-auto text-maroon">Nearest Items</legend>
+                                        <button (click)="openItemModal(nearestItemModal,item.id)"
+                                            class="btn btn-neutral btn-icon mr-4 mb-2">
+                                            <span class="btn-inner--icon">
+                                                <i class="fa fa-plus"></i>
+                                            </span>
+                                            <span class="btn-inner--text">Create Nearest Item</span>
+                                        </button>
+                                        <div class="row">
+
+                                            <div class="col-lg-4 mb-2" *ngFor="let item1 of item.branchNearestItem">
+                                                <a href="javascript:;" (click)="removeNearestItem(item1.id)"
+                                                    class="float-right mr-2 mt-1"><i class="fa fa-times-circle"></i></a>
+                                                <div class="brdr ">
+                                                    <div class="row">
+                                                        <div class="col-lg-8">
+                                                            <div class="form-group">
+                                                                <a href="{{item1.link}}">{{item1.name}}({{item1.nameAr}})</a>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <p>{{item1.description}}</p>
+                                                                <p>{{item1.descriptionAr}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4 ">
+                                                            <img src="{{ item1.image }}" class="addon-image"
+                                                                alt="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </ng-template>
+                            </ngb-panel>
+                        </ngb-accordion>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #nearestCategoryModal let-modal>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <i class="fa fa-times-circle"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="card bg-secondary shadow">
+            <form method="post" *ngIf="nearestCategoryForm" [formGroup]="nearestCategoryForm">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Nearest Category</h3>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button class="btn btn-sm btn-primary"
+                                [disabled]="saveLoading || !nearestCategoryForm.valid" type="button"
+                                (click)="saveNearestCategory(nearestCategoryForm.value)">
+                                <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                <span *ngIf="!saveLoading">Update</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <input type="text" name="name" formControlName="name"
+                                    class="form-control form-control-alternative" placeholder="Name" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="nameAr" formControlName="nameAr"
+                                    class="form-control form-control-alternative ar" placeholder="Name in Arabic" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #nearestItemModal let-modal>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <i class="fa fa-times-circle"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="card bg-secondary shadow">
+            <form method="post" *ngIf="nearestItemForm" [formGroup]="nearestItemForm">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Nearest Item</h3>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button class="btn btn-sm btn-primary" [disabled]="saveLoading || !nearestItemForm.valid"
+                                type="button" (click)="saveNearestItem(nearestItemForm.value)">
+                                <span class="fa fa-circle-notch fa-spin" *ngIf="saveLoading"></span>
+                                <span *ngIf="!saveLoading">Create</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="brdr mb-2">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <input type="text" name="name" formControlName="name"
+                                                class="form-control form-control-alternative" placeholder="Name" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="nameAr" formControlName="nameAr"
+                                                class="form-control form-control-alternative ar" placeholder="Name in Arabic" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <textarea type="text" rows="8" formControlName="description"
+                                                name="description" class="form-control form-control-alternative"
+                                                placeholder="Description"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <textarea type="text" rows="8" formControlName="descriptionAr"
+                                                name="descriptionAr" class="form-control form-control-alternative ar"
+                                                placeholder="Description in Arabic"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <input type="text" name="link" formControlName="link"
+                                                class="form-control form-control-alternative" placeholder="Link" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group file-area room-file-area">
+                                            <input type="file" formControlName="itemImages"
+                                                (change)="changeFile($event.target.files[0])" name="itemImages"
+                                                required="required" />
+                                            <div class="file-dummy">
+                                                <div class="success">Great, your image is
+                                                    selected. Keep on.</div>
+                                                <div class="default">Please select images
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <img *ngIf="imageData!=null" [src]="imageData" class="addon-image" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

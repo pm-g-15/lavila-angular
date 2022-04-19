@@ -1,0 +1,75 @@
+<div class="header bg-gradient-maroon pb-8 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+      <a routerLink="create" class="btn btn-neutral btn-icon mr-4">
+        <span class="btn-inner--icon">
+          <i class="fa fa-plus"></i>
+        </span>
+        <span class="btn-inner--text">Create Room</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card shadow">
+        <div class="card-body">
+          <div class="table-responsive">
+            <!-- Projects table -->
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" style="width: 100%;" class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr> 
+                  <th scope="col" style="width: 80%;">Description</th> 
+                  <th scope="col" style="width: 10%;">Count</th> 
+                  <th scope="col" style="width: 10%;">Actions</th>
+                </tr>
+              </thead>
+              
+
+              <tbody *ngIf="rooms.length != 0">
+
+                <tr *ngFor="let r of rooms">  
+                  <td   style="width: 80%;">
+                    {{r.description}}
+                  </td>  
+                  <td   style="width: 10%;">
+                    {{r.count}}
+                  </td>  
+                  <td   style="width: 10%;">
+                    <a [routerLink]="['update-related-rooms',r.id]" ngbTooltip="Update Related Room" class="btn btn-neutral btn-icon">
+                      <i class="fa fa-link "></i>
+                    </a> 
+                    <a [routerLink]="['update-addon',r.id]"  ngbTooltip="Update addon"  class="btn btn-neutral btn-icon">
+                      <i class="fa fa-plus "></i>
+                    </a> 
+                    <a [routerLink]="['update',r.id]"  ngbTooltip="Edit"  class="btn btn-neutral btn-icon">
+                      <i class="fa fa-pencil-alt"></i>
+                    </a>
+                    <button  (click)="changeRoomFeaturedStatus(r.id,!r.featured)"  ngbTooltip="Change featured status"  [disabled]="loadingStarId == r.id"
+                      class="btn btn-neutral btn-icon">
+                      <i class=" fa-star" [class.fas]="r.featured" [class.far]="!r.featured" *ngIf="loadingStarId != r.id"></i>
+                      <i class="fa fa-circle-notch fa-spin" *ngIf="loadingStarId == r.id"></i>
+                    </button>
+                    <!-- <button (click)="deleteRoom(r.id)"  ngbTooltip="Delete"  [disabled]="loadingId == r.id"
+                      class="btn btn-neutral btn-icon">
+                      <i class="fa fa-trash" *ngIf="loadingId != r.id"></i>
+                      <i class="fa fa-circle-notch fa-spin" *ngIf="loadingId == r.id"></i>
+                    </button> -->
+                  </td>
+                </tr>
+
+              </tbody>
+              <tbody *ngIf="rooms.length == 0">
+                <tr>
+                  <td colspan="3" class="no-data-available">No data!</td>
+                </tr>
+              <tbody>  
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
